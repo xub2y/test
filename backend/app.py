@@ -1,12 +1,13 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import sqlite3
+import bcrypt
 import os
 
 app = Flask(__name__)
 CORS(app)
 
-DB_PATH = 'users.db'
+DB_PATH = os.path.join(os.path.dirname(__file__), 'users.db')
 
 def init_db():
     conn = sqlite3.connect(DB_PATH)
@@ -34,7 +35,6 @@ def register():
 
     if not username:
         return jsonify({'error': '用户名不能为空'}), 400
-
     if not password:
         return jsonify({'error': '密码不能为空'}), 400
 
@@ -44,15 +44,16 @@ def register():
 
     if len(username) > 20:
         return jsonify({'error': '用户名长度不能超过20位'}), 400
-
     if len(password) < 6:
         return jsonify({'error': '密码长度不能少于6位'}), 400
+
+    hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
 
     try:
         conn = get_db()
         c = conn.cursor()
         c.execute('INSERT INTO users (username, password) VALUES (?, ?)',
-                  (username, password))
+                  (username, hashed))
         conn.commit()
         conn.close()
         return jsonify({'message': '注册成功'}), 200
@@ -67,18 +68,16 @@ def login():
 
     if not username:
         return jsonify({'error': '用户名不能为空'}), 400
-
     if not password:
         return jsonify({'error': '密码不能为空'}), 400
 
     conn = get_db()
     c = conn.cursor()
-    c.execute('SELECT * FROM users WHERE username = ? AND password = ?',
-              (username, password))
+    c.execute('SELECT * FROM users WHERE username = ?', (username,))
     user = c.fetchone()
     conn.close()
 
-    if user:
+    if user and bcrypt.checkpw(password.encode('utf-8'), user['password']):
         token = f"token_{username}_demo"
         return jsonify({'message': '登录成功', 'token': token, 'username': username}), 200
     else:
