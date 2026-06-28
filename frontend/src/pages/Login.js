@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import CryptoJS from 'crypto-js';
 import './Form.css';
 
 function Login() {
@@ -12,8 +13,13 @@ function Login() {
   const handleLogin = async () => {
     if (!username) { setMessage('用户名不能为空'); return; }
     if (!password) { setMessage('密码不能为空'); return; }
+
     try {
-      const res = await axios.post('http://127.0.0.1:5000/api/login', { username, password });
+      const hashedPassword = CryptoJS.SHA256(password).toString();
+      const res = await axios.post('http://127.0.0.1:5000/api/login', {
+        username,
+        password: hashedPassword
+      });
       localStorage.setItem('token', res.data.token);
       localStorage.setItem('username', res.data.username);
       navigate('/home');
