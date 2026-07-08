@@ -1,0 +1,68 @@
+[
+  {
+    "case_id": "TC-001",
+    "name": "用户名为空时注册失败",
+    "request": {
+      "api": "/api/register",
+      "payload": {
+        "username": "",
+        "password": "123456"
+      }
+    },
+    "expected": {
+      "status_code": 400,
+      "text": "用户名不能为空"
+    },
+    "actual": {
+      "status_code": 400,
+      "body": {
+        "error": "用户名不能为空"
+      }
+    },
+    "result": "PASS"
+  },
+  {
+    "case_id": "TC-002",
+    "name": "用户名小于6位时注册失败",
+    "request": {
+      "api": "/api/register",
+      "payload": {
+        "username": "u7620",
+        "password": "123456"
+      }
+    },
+    "expected": {
+      "status_code": 400,
+      "text": "用户名长度不能少于6位"
+    },
+    "actual": {
+      "status_code": 200,
+      "body": {
+        "message": "注册成功"
+      }
+    },
+    "result": "FAIL"
+  },
+  {
+    "case_id": "TC-003",
+    "name": "用户名等于6位以上时注册成功",
+    "request": {
+      "api": "/api/register",
+      "payload": {
+        "username": "user497620",
+        "password": "123456"
+      }
+    },
+    "expected": {
+      "status_code": 200,
+      "text": "注册成功"
+    },
+    "actual": {
+      "status_code": 200,
+      "body": {
+        "message": "注册成功"
+      }
+    },
+    "result": "PASS"
+  }
+]

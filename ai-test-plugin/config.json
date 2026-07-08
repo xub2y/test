@@ -1,6 +1,6 @@
 {
   "project_name": "登录注册 Demo 系统",
-  "base_url": "http://127.0.0.1:5000",
+  "base_url": "http://127.0.0.1:5001",
   "docs": {
     "prd": "../docs/PRD.md",
     "requirements": "../docs/requirements.md",

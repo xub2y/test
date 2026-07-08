@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 
 from api_tester import run_api_tests
-
+from report_generator import generate_outputs
 
 BASE_DIR = Path(__file__).resolve().parent
 
@@ -44,6 +44,7 @@ def main():
     results = run_api_tests(config)
 
     save_json(config["outputs"]["test_results"], results)
+    report_path, bugs_path = generate_outputs(config, results, BASE_DIR)
 
     total = len(results)
     passed = len([item for item in results if item["result"] == "PASS"])
@@ -51,7 +52,8 @@ def main():
 
     print(f"接口测试执行完成：共 {total} 条，通过 {passed} 条，失败 {failed} 条")
     print(f"测试结果已保存到：{config['outputs']['test_results']}")
-
+    print(f"测试报告已保存到：{report_path}")
+    print(f"Bug 单已保存到：{bugs_path}")
 
 if __name__ == "__main__":
     main()
