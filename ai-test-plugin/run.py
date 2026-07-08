@@ -1,6 +1,8 @@
 import json
 from pathlib import Path
 
+from api_tester import run_api_tests
+
 
 BASE_DIR = Path(__file__).resolve().parent
 
@@ -17,6 +19,14 @@ def read_file(relative_path):
         return f.read()
 
 
+def save_json(relative_path, data):
+    file_path = BASE_DIR / relative_path
+    file_path.parent.mkdir(parents=True, exist_ok=True)
+
+    with open(file_path, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+
+
 def main():
     config = load_config()
 
@@ -26,10 +36,21 @@ def main():
 
     print("AI 自动化测试插件原型启动成功")
     print(f"项目名称：{config['project_name']}")
-    print(f"被测服务地址：{config['base_url']}")
     print(f"PRD 文档长度：{len(prd)} 字符")
     print(f"需求文档长度：{len(requirements)} 字符")
     print(f"测试用例文档长度：{len(test_cases)} 字符")
+
+    print("开始执行接口测试...")
+    results = run_api_tests(config)
+
+    save_json(config["outputs"]["test_results"], results)
+
+    total = len(results)
+    passed = len([item for item in results if item["result"] == "PASS"])
+    failed = total - passed
+
+    print(f"接口测试执行完成：共 {total} 条，通过 {passed} 条，失败 {failed} 条")
+    print(f"测试结果已保存到：{config['outputs']['test_results']}")
 
 
 if __name__ == "__main__":
