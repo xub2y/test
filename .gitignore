@@ -1,2 +1,12 @@
 frontend/node_modules
 backend/users.db
+# Python cache
+__pycache__/
+*.pyc
+
+# Python virtual environments
+.venv/
+.venv-1/
+
+# Local database
+backend/users.db
