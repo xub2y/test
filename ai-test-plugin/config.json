@@ -1,0 +1,19 @@
+{
+  "project_name": "登录注册 Demo 系统",
+  "base_url": "http://127.0.0.1:5000",
+  "docs": {
+    "prd": "../docs/PRD.md",
+    "requirements": "../docs/requirements.md",
+    "test_cases": "../docs/test_cases.md"
+  },
+  "api": {
+    "register": "/api/register",
+    "login": "/api/login",
+    "userinfo": "/api/userinfo"
+  },
+  "outputs": {
+    "test_results": "outputs/test_results.json",
+    "test_report": "outputs/test_report.md",
+    "bugs": "outputs/bugs.md"
+  }
+}
