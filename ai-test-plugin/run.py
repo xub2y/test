@@ -42,8 +42,9 @@ def main():
     print(f"测试用例文档长度：{len(test_cases)} 字符")
 
     print("开始根据 PRD 生成结构化测试用例...")
-    generated_cases, generated_case_path = generate_test_cases(prd, config, BASE_DIR)
+    generated_cases, generated_case_path, generation_meta = generate_test_cases(prd, config, BASE_DIR)
     print(f"已生成测试用例：{len(generated_cases)} 条")
+    print(f"用例生成方式：{format_generation_source(generation_meta)}")
     print(f"结构化测试用例已保存到：{generated_case_path}")
 
     print("开始执行接口测试...")
@@ -60,6 +61,16 @@ def main():
     print(f"测试结果已保存到：{config['outputs']['test_results']}")
     print(f"测试报告已保存到：{report_path}")
     print(f"Bug 单已保存到：{bugs_path}")
+
+
+def format_generation_source(generation_meta):
+    source = generation_meta.get("source")
+    if source == "openai":
+        return f"OpenAI 大模型生成（{generation_meta.get('model')} / {generation_meta.get('api')}）"
+
+    reason = generation_meta.get("reason", "unknown")
+    return f"规则生成兜底（{reason}）"
+
 
 if __name__ == "__main__":
     main()

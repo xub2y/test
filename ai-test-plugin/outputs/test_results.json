@@ -32,7 +32,7 @@
       "method": "POST",
       "api": "/api/register",
       "payload": {
-        "username": "u7035",
+        "username": "u4153",
         "password": "123456"
       }
     },
@@ -57,7 +57,7 @@
       "method": "POST",
       "api": "/api/register",
       "payload": {
-        "username": "u07035",
+        "username": "u24153",
         "password": "123456"
       }
     },
@@ -107,7 +107,7 @@
       "method": "POST",
       "api": "/api/register",
       "payload": {
-        "username": "ua84107035",
+        "username": "ua84124153",
         "password": ""
       }
     },
@@ -132,7 +132,7 @@
       "method": "POST",
       "api": "/api/register",
       "payload": {
-        "username": "ub84107035",
+        "username": "ub84124153",
         "password": "123"
       }
     },
@@ -157,7 +157,7 @@
       "method": "POST",
       "api": "/api/register",
       "payload": {
-        "username": "dup4107035",
+        "username": "dup4124153",
         "password": "123456"
       }
     },
@@ -189,7 +189,7 @@
       "method": "POST",
       "api": "/api/login",
       "payload": {
-        "username": "login107035",
+        "username": "login124153",
         "password": "123456"
       }
     },
@@ -201,8 +201,8 @@
       "status_code": 200,
       "body": {
         "message": "登录成功",
-        "token": "token_login107035_demo",
-        "username": "login107035"
+        "token": "token_login124153_demo",
+        "username": "login124153"
       }
     },
     "setup_results": [
@@ -223,7 +223,7 @@
       "method": "POST",
       "api": "/api/login",
       "payload": {
-        "username": "wrong107035",
+        "username": "wrong124153",
         "password": "wrong-password"
       }
     },
@@ -255,7 +255,7 @@
       "method": "POST",
       "api": "/api/login",
       "payload": {
-        "username": "none107035",
+        "username": "none124153",
         "password": "123456"
       }
     },
@@ -305,7 +305,7 @@
       "method": "POST",
       "api": "/api/login",
       "payload": {
-        "username": "uc84107035",
+        "username": "uc84124153",
         "password": ""
       }
     },

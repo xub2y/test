@@ -1,0 +1,6 @@
+{
+  "source": "rule_fallback",
+  "provider": "openai",
+  "reason": "OPENAI_API_KEY is not set",
+  "case_count": 12
+}

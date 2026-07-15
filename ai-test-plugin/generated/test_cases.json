@@ -83,6 +83,12 @@
     "name": "重复用户名注册失败",
     "method": "POST",
     "path": "/api/register",
+    "payload": {
+      "username": "{{duplicate_username}}",
+      "password": "{{valid_password}}"
+    },
+    "expected_status": 400,
+    "expected_text": "该用户名已被注册",
     "setup": [
       {
         "method": "POST",
@@ -92,13 +98,7 @@
           "password": "{{valid_password}}"
         }
       }
-    ],
-    "payload": {
-      "username": "{{duplicate_username}}",
-      "password": "{{valid_password}}"
-    },
-    "expected_status": 400,
-    "expected_text": "该用户名已被注册"
+    ]
   },
   {
     "case_id": "TC-008",
@@ -106,6 +106,12 @@
     "name": "正确账号密码登录成功",
     "method": "POST",
     "path": "/api/login",
+    "payload": {
+      "username": "{{login_username}}",
+      "password": "{{valid_password}}"
+    },
+    "expected_status": 200,
+    "expected_text": "登录成功",
     "setup": [
       {
         "method": "POST",
@@ -115,13 +121,7 @@
           "password": "{{valid_password}}"
         }
       }
-    ],
-    "payload": {
-      "username": "{{login_username}}",
-      "password": "{{valid_password}}"
-    },
-    "expected_status": 200,
-    "expected_text": "登录成功"
+    ]
   },
   {
     "case_id": "TC-009",
@@ -129,6 +129,12 @@
     "name": "密码错误时登录失败",
     "method": "POST",
     "path": "/api/login",
+    "payload": {
+      "username": "{{wrong_password_username}}",
+      "password": "wrong-password"
+    },
+    "expected_status": 401,
+    "expected_text": "用户名或密码错误",
     "setup": [
       {
         "method": "POST",
@@ -138,13 +144,7 @@
           "password": "{{valid_password}}"
         }
       }
-    ],
-    "payload": {
-      "username": "{{wrong_password_username}}",
-      "password": "wrong-password"
-    },
-    "expected_status": 401,
-    "expected_text": "用户名或密码错误"
+    ]
   },
   {
     "case_id": "TC-010",
