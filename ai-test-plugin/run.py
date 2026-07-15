@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 
 from api_tester import run_api_tests
+from case_generator import generate_test_cases
 from report_generator import generate_outputs
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -40,8 +41,13 @@ def main():
     print(f"需求文档长度：{len(requirements)} 字符")
     print(f"测试用例文档长度：{len(test_cases)} 字符")
 
+    print("开始根据 PRD 生成结构化测试用例...")
+    generated_cases, generated_case_path = generate_test_cases(prd, config, BASE_DIR)
+    print(f"已生成测试用例：{len(generated_cases)} 条")
+    print(f"结构化测试用例已保存到：{generated_case_path}")
+
     print("开始执行接口测试...")
-    results = run_api_tests(config)
+    results = run_api_tests(config, generated_cases)
 
     save_json(config["outputs"]["test_results"], results)
     report_path, bugs_path = generate_outputs(config, results, BASE_DIR)

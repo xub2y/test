@@ -1,10 +1,14 @@
 {
   "project_name": "登录注册 Demo 系统",
   "base_url": "http://127.0.0.1:5001",
+  "request_timeout": 30,
   "docs": {
     "prd": "../docs/PRD.md",
     "requirements": "../docs/requirements.md",
     "test_cases": "../docs/test_cases.md"
+  },
+  "generated": {
+    "test_cases": "generated/test_cases.json"
   },
   "api": {
     "register": "/api/register",

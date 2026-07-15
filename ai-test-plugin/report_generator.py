@@ -21,7 +21,7 @@ def build_test_report(config, results):
     pass_rate = round((passed / total) * 100, 2) if total else 0
 
     lines = [
-        "# 登录注册 Demo 系统测试报告",
+        f"# {config['project_name']}测试报告",
         "",
         "## 1. 测试概述",
         "",
@@ -39,23 +39,23 @@ def build_test_report(config, results):
         "",
         "## 3. 执行明细",
         "",
-        "| 用例编号 | 用例名称 | 预期状态码 | 实际状态码 | 结果 |",
-        "|---|---|---:|---:|---|"
+        "| 用例编号 | 模块 | 用例名称 | 预期状态码 | 实际状态码 | 结果 |",
+        "|---|---|---|---:|---:|---|"
     ]
 
     for item in results:
         lines.append(
-            f"| {item['case_id']} | {item['name']} | "
+            f"| {item['case_id']} | {item.get('module', '')} | {item['name']} | "
             f"{item['expected']['status_code']} | "
             f"{item['actual']['status_code']} | {item['result']} |"
         )
 
+    failed_cases = [item for item in results if item["result"] == "FAIL"]
     lines.extend([
         "",
         "## 4. 测试结论",
         "",
-        "本次测试发现用户名长度校验缺陷：需求要求用户名长度必须为 6-20 位，但接口未正确拦截小于 6 位的用户名。"
-        if failed else
+        build_summary(failed_cases) if failed else
         "本次测试全部通过。"
     ])
 
@@ -72,12 +72,13 @@ def build_bug_report(results):
 
     for index, item in enumerate(failed_cases, start=1):
         bug_id = f"BUG-{index:03d}"
+        suggestion = build_fix_suggestion(item)
 
         lines.extend([
-            f"## {bug_id} 用户名小于6位仍可注册成功",
+            f"## {bug_id} {item['name']}",
             "",
             f"- 关联用例：{item['case_id']}",
-            "- 所属模块：用户注册",
+            f"- 所属模块：{item.get('module', '')}",
             "- 严重级别：Major",
             "- 优先级：P1",
             f"- 请求接口：{item['request']['api']}",
@@ -87,8 +88,22 @@ def build_bug_report(results):
             "",
             "### 修复建议",
             "",
-            "在后端注册接口中补充用户名最小长度校验：当用户名长度小于 6 位时，返回 400，并提示用户名长度不能少于6位。",
+            suggestion,
             ""
         ])
 
     return "\n".join(lines)
+
+
+def build_summary(failed_cases):
+    failed_names = "、".join([item["name"] for item in failed_cases])
+    return f"本次测试发现 {len(failed_cases)} 个失败用例：{failed_names}。请优先检查接口实现与 PRD 需求是否一致。"
+
+
+def build_fix_suggestion(item):
+    expected_text = item["expected"]["text"]
+
+    if "用户名长度不能少于6位" in expected_text:
+        return "在后端注册接口中补充用户名最小长度校验：当用户名长度小于 6 位时，返回 400，并提示用户名长度不能少于6位。"
+
+    return f"根据关联需求补充接口校验或修正业务逻辑，确保接口返回状态码 {item['expected']['status_code']}，且响应内容包含 `{expected_text}`。"

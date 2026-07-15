@@ -3,8 +3,6 @@ from flask_cors import CORS
 import sqlite3
 import bcrypt
 import os
-import os
-import os
 
 app = Flask(__name__)
 CORS(app)
@@ -25,7 +23,7 @@ def init_db():
     conn.close()
 
 def get_db():
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=30)
     conn.row_factory = sqlite3.Row
     return conn
 
@@ -51,16 +49,19 @@ def register():
 
     hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
 
+    conn = None
     try:
         conn = get_db()
         c = conn.cursor()
         c.execute('INSERT INTO users (username, password) VALUES (?, ?)',
                   (username, hashed))
         conn.commit()
-        conn.close()
         return jsonify({'message': '注册成功'}), 200
     except sqlite3.IntegrityError:
         return jsonify({'error': '该用户名已被注册'}), 400
+    finally:
+        if conn:
+            conn.close()
 
 @app.route('/api/login', methods=['POST'])
 def login():
@@ -74,10 +75,12 @@ def login():
         return jsonify({'error': '密码不能为空'}), 400
 
     conn = get_db()
-    c = conn.cursor()
-    c.execute('SELECT * FROM users WHERE username = ?', (username,))
-    user = c.fetchone()
-    conn.close()
+    try:
+        c = conn.cursor()
+        c.execute('SELECT * FROM users WHERE username = ?', (username,))
+        user = c.fetchone()
+    finally:
+        conn.close()
 
     if user and bcrypt.checkpw(password.encode('utf-8'), user['password']):
         token = f"token_{username}_demo"
