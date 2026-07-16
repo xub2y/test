@@ -15,7 +15,7 @@
   {
     "case_id": "TC-002",
     "module": "用户注册",
-    "name": "用户名小于6位时注册失败",
+    "name": "用户名长度小于6位时注册失败",
     "method": "POST",
     "path": "/api/register",
     "payload": {
@@ -23,12 +23,12 @@
       "password": "{{valid_password}}"
     },
     "expected_status": 400,
-    "expected_text": "用户名长度不能少于6位"
+    "expected_text": "用户名长度必须为6-20位"
   },
   {
     "case_id": "TC-003",
     "module": "用户注册",
-    "name": "用户名等于6位时注册成功",
+    "name": "用户名长度为6位时注册成功",
     "method": "POST",
     "path": "/api/register",
     "payload": {
@@ -41,7 +41,7 @@
   {
     "case_id": "TC-004",
     "module": "用户注册",
-    "name": "用户名超过20位时注册失败",
+    "name": "用户名长度超过20位时注册失败",
     "method": "POST",
     "path": "/api/register",
     "payload": {
@@ -49,7 +49,7 @@
       "password": "{{valid_password}}"
     },
     "expected_status": 400,
-    "expected_text": "用户名长度不能超过20位"
+    "expected_text": "用户名长度必须为6-20位"
   },
   {
     "case_id": "TC-005",
@@ -67,18 +67,31 @@
   {
     "case_id": "TC-006",
     "module": "用户注册",
-    "name": "密码小于6位时注册失败",
+    "name": "密码长度小于6位时注册失败",
     "method": "POST",
     "path": "/api/register",
     "payload": {
       "username": "{{valid_username_b}}",
-      "password": "123"
+      "password": "12345"
     },
     "expected_status": 400,
     "expected_text": "密码长度不能少于6位"
   },
   {
     "case_id": "TC-007",
+    "module": "用户注册",
+    "name": "密码长度为6位时注册成功",
+    "method": "POST",
+    "path": "/api/register",
+    "payload": {
+      "username": "{{valid_username_c}}",
+      "password": "123456"
+    },
+    "expected_status": 200,
+    "expected_text": "注册成功"
+  },
+  {
+    "case_id": "TC-008",
     "module": "用户注册",
     "name": "重复用户名注册失败",
     "method": "POST",
@@ -88,7 +101,7 @@
       "password": "{{valid_password}}"
     },
     "expected_status": 400,
-    "expected_text": "该用户名已被注册",
+    "expected_text": "用户名不能重复",
     "setup": [
       {
         "method": "POST",
@@ -101,9 +114,35 @@
     ]
   },
   {
-    "case_id": "TC-008",
+    "case_id": "TC-009",
     "module": "用户登录",
-    "name": "正确账号密码登录成功",
+    "name": "用户名为空时登录失败",
+    "method": "POST",
+    "path": "/api/login",
+    "payload": {
+      "username": "",
+      "password": "{{valid_password}}"
+    },
+    "expected_status": 400,
+    "expected_text": "用户名不能为空"
+  },
+  {
+    "case_id": "TC-010",
+    "module": "用户登录",
+    "name": "密码为空时登录失败",
+    "method": "POST",
+    "path": "/api/login",
+    "payload": {
+      "username": "{{login_username}}",
+      "password": ""
+    },
+    "expected_status": 400,
+    "expected_text": "密码不能为空"
+  },
+  {
+    "case_id": "TC-011",
+    "module": "用户登录",
+    "name": "已注册用户使用正确密码登录成功",
     "method": "POST",
     "path": "/api/login",
     "payload": {
@@ -124,17 +163,17 @@
     ]
   },
   {
-    "case_id": "TC-009",
+    "case_id": "TC-012",
     "module": "用户登录",
-    "name": "密码错误时登录失败",
+    "name": "已注册用户使用错误密码登录失败",
     "method": "POST",
     "path": "/api/login",
     "payload": {
       "username": "{{wrong_password_username}}",
-      "password": "wrong-password"
+      "password": "wrong_password"
     },
     "expected_status": 401,
-    "expected_text": "用户名或密码错误",
+    "expected_text": "登录失败",
     "setup": [
       {
         "method": "POST",
@@ -147,7 +186,7 @@
     ]
   },
   {
-    "case_id": "TC-010",
+    "case_id": "TC-013",
     "module": "用户登录",
     "name": "未注册用户登录失败",
     "method": "POST",
@@ -157,32 +196,44 @@
       "password": "{{valid_password}}"
     },
     "expected_status": 401,
-    "expected_text": "用户名或密码错误"
+    "expected_text": "登录失败"
   },
   {
-    "case_id": "TC-011",
-    "module": "用户登录",
-    "name": "登录用户名为空时失败",
-    "method": "POST",
-    "path": "/api/login",
-    "payload": {
-      "username": "",
-      "password": "{{valid_password}}"
-    },
-    "expected_status": 400,
-    "expected_text": "用户名不能为空"
+    "case_id": "TC-014",
+    "module": "首页访问",
+    "name": "登录成功后可以访问首页",
+    "method": "GET",
+    "path": "/api/userinfo",
+    "payload": {},
+    "expected_status": 200,
+    "expected_text": "首页",
+    "setup": [
+      {
+        "method": "POST",
+        "path": "/api/register",
+        "payload": {
+          "username": "{{valid_username_a}}",
+          "password": "{{valid_password}}"
+        }
+      },
+      {
+        "method": "POST",
+        "path": "/api/login",
+        "payload": {
+          "username": "{{valid_username_a}}",
+          "password": "{{valid_password}}"
+        }
+      }
+    ]
   },
   {
-    "case_id": "TC-012",
-    "module": "用户登录",
-    "name": "登录密码为空时失败",
-    "method": "POST",
-    "path": "/api/login",
-    "payload": {
-      "username": "{{valid_username_c}}",
-      "password": ""
-    },
-    "expected_status": 400,
-    "expected_text": "密码不能为空"
+    "case_id": "TC-015",
+    "module": "首页访问",
+    "name": "未登录时访问首页认证失败",
+    "method": "GET",
+    "path": "/api/userinfo",
+    "payload": {},
+    "expected_status": 401,
+    "expected_text": "登录失败"
   }
 ]
